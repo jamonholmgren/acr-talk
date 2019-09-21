@@ -41,7 +41,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'graphiql-rails'
-  gem "prettier", "~> 0.15.0"
 end
 
 group :test do
