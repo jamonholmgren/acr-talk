@@ -91,6 +91,21 @@ end
 }
 ```
 
+### Dump the GraphQL Schema file
+
+* rails g task graphql dump
+* In lib/tasks/graphql.rake:
+
+```ruby
+namespace :graphql do
+  desc "Dump GraphQL Schema"
+  task dump: :environment do
+    require "graphql/rake_task"
+    GraphQL::RakeTask.new(schema_name: "AcrRails")
+  end
+end
+```
+
 ### Cleanup/Start Over
 
 * rails db:reset
