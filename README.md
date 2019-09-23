@@ -118,7 +118,26 @@ end
 ## React Native
 
 * yarn add mst-gql graphql-request
-* yarn mst-gql --format ts ../AcrRails/acr.schema
+* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
+* If you run it again, it'll skip some files and write to the .base files
+* Now we need to import the base MobX-State-Tree model to the RootStore properly. In app/models/root-store/root-store.ts:
+
+```typescript
+// .. omitted above
+
+import { RootStoreBase } from "../gql/RootStore.base"
+
+/**
+ * A RootStore model.
+ */
+export const RootStoreModel = RootStoreBase.props({
+  navigationStore: types.optional(NavigationStoreModel, {}),
+})
+
+// .. omitted below
+```
+
+* Now we need to run a query to pull in data.
 
 ### Cleanup/Start Over
 
