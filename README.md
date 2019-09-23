@@ -61,10 +61,16 @@ end
 
 ```
 {
-  post(1)
+  posts
 }
 ```
 
-### Cleanup
+### Cleanup/Start Over
 
-* rails db:reset 
+* rails db:reset
+* rm ./db/schema.rb
+* Now either start from `master` or:
+ - rails d scaffold Comment
+ - rails d scaffold Post
+ - rails d graphql:object Comment
+ - rails d graphql:object Post
