@@ -117,7 +117,8 @@ end
 
 ## React Native
 
-* TODO
+* yarn add mst-gql graphql-request
+* 
 
 ### Cleanup/Start Over
 
