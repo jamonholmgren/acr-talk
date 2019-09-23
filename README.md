@@ -1,24 +1,70 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## ACR Checklist
 
-Things you may want to cover:
+### Initial setup
 
-* Ruby version
+* Start from `master` branch
+* rails g graphql:install
+* rails g scaffold Post title:string rating:integer
+* rails g scaffold Comment post:references
+* Edit models/post.rb:
 
-* System dependencies
+```ruby
+class Post < ApplicationRecord
+  has_many :comments
+end
+```
 
-* Configuration
+* rails db:migrate
 
-* Database creation
+### Create GraphQL types and query
 
-* Database initialization
+* rails g graphql:object Post id:ID title:String rating:Int "comments:[Comment]"
+* rails g graphql:object Comment id:ID title:String post:Post
 
-* How to run the test suite
+```ruby
+module Types
+  class CommentType < Types::BaseObject
+    field :id, ID, null: false
+    field :post, PostType, null: false
+  end
+end
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+* Edit `graphql/types/query_type.rb`:
 
-* Deployment instructions
+```ruby
+module Types
+  class QueryType < Types::BaseObject
+    field :post, PostType, null: true do
+      description "Find a post by ID"
+      argument :id, ID, required: true
+    end
 
-* ...
+    def posts
+      Post.all
+    end
+
+    def post(id:)
+      Post.find(id)
+    end
+  end
+end
+```
+
+### Check it out!
+
+* rails server
+* In a new tab, visit http://localhost:3000/posts/new
+* Visit http://localhost:3000/graphiql and type in:
+
+```
+{
+  post(1)
+}
+```
+
+### Cleanup
+
+* rails db:reset 
