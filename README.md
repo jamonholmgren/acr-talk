@@ -1,6 +1,10 @@
-# README
+# Ancient City Ruby, Rails, React 2019
 
-## ACR Checklist
+This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.com/jamonholmgren) and [Morgan Laco](https://twitter.com/morgancodes).
+
+## Rails App
+
+Go in the `./rails` folder and do the following.
 
 ### Initial setup
 
@@ -98,13 +102,20 @@ end
 
 ```ruby
 namespace :graphql do
-  desc "Dump GraphQL Schema"
+  desc "Dump GraphQL Schema File"
   task dump: :environment do
-    require "graphql/rake_task"
-    GraphQL::RakeTask.new(schema_name: "AcrRails")
+    schema_dump = AcrRailsSchema.to_definition
+    schema_path = Rails.root.join("./acr.schema")
+    File.write(schema_path, schema_dump)
+    puts schema_path
   end
 end
 ```
+
+* rake graphql:dump
+* You'll see the path of the new schema file.
+
+## 
 
 ### Cleanup/Start Over
 

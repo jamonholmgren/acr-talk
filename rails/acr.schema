@@ -1,0 +1,31 @@
+type Comment {
+  id: ID
+  post: Post
+  title: String
+}
+
+type Mutation {
+  """
+  An example field added by the generator
+  """
+  testField: String!
+}
+
+type Post {
+  comments: [Comment!]
+  id: ID
+  rating: Int
+  title: String
+}
+
+type Query {
+  """
+  Find a post by ID
+  """
+  post(id: ID!): Post
+
+  """
+  Find all posts
+  """
+  posts: [Post!]
+}
