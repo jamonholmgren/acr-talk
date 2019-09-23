@@ -7,7 +7,8 @@
 * Start from `master` branch
 * rails g graphql:install
 * rails g scaffold Post title:string rating:integer
-* rails g scaffold Comment post:references
+* rails g scaffold Comment title:string post:references
+* rails db:migrate
 * Edit models/post.rb:
 
 ```ruby
@@ -16,34 +17,26 @@ class Post < ApplicationRecord
 end
 ```
 
-* rails db:migrate
-
 ### Create GraphQL types and query
 
 * rails g graphql:object Post id:ID title:String rating:Int "comments:[Comment]"
 * rails g graphql:object Comment id:ID title:String post:Post
-
-```ruby
-module Types
-  class CommentType < Types::BaseObject
-    field :id, ID, null: false
-    field :post, PostType, null: false
-  end
-end
-```
-
 * Edit `graphql/types/query_type.rb`:
 
 ```ruby
 module Types
   class QueryType < Types::BaseObject
-    field :post, PostType, null: true do
-      description "Find a post by ID"
-      argument :id, ID, required: true
+    field :posts, [PostType], null: true do
+      description "Find all posts"
     end
 
     def posts
       Post.all
+    end
+
+    field :post, PostType, null: true do
+      description "Find a post by ID"
+      argument :id, ID, required: true
     end
 
     def post(id:)
@@ -59,9 +52,42 @@ end
 * In a new tab, visit http://localhost:3000/posts/new
 * Visit http://localhost:3000/graphiql and type in:
 
-```
+```graphql
 {
-  posts
+  posts {
+    id
+    title
+    rating
+  }
+}
+```
+
+### Add comments
+
+* Visit http://localhost:3000/comments/new
+* That won't do. Edit `views/comments/_form.html.erb` and replace the `post_id` field:
+
+```html
+  <div class="field">
+    <%= form.label :post_id %>
+    <%= form.collection_select(:post_id, Post.all, :id, :title) %>
+  </div>
+```
+
+* Now add some comments to a post
+* In graphiql:
+
+```graphql
+{
+  posts {
+    id
+    title
+    rating
+    comments {
+      id
+      title
+    }
+  }
 }
 ```
 

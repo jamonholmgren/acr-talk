@@ -12,8 +12,13 @@
   <% end %>
 
   <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
     <%= form.label :post_id %>
-    <%= form.text_field :post_id %>
+    <%= form.collection_select(:post_id, Post.all, :id, :title) %>
   </div>
 
   <div class="actions">
