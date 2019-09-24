@@ -10,21 +10,13 @@ Go in the `./rails` folder and do the following.
 
 * Start from `master` branch
 * rails g graphql:install
-* rails g scaffold Post title:string rating:integer
-* rails g scaffold Comment title:string post:references
+* rails g scaffold Post title:string
 * rails db:migrate
 * Edit models/post.rb:
 
-```ruby
-class Post < ApplicationRecord
-  has_many :comments, dependent: :delete_all
-end
-```
-
 ### Create GraphQL types and query
 
-* rails g graphql:object Post id:ID title:String rating:Int "comments:[Comment]"
-* rails g graphql:object Comment id:ID title:String post:Post
+* rails g graphql:object Post id:ID title:String
 * Edit `graphql/types/query_type.rb`:
 
 ```ruby
@@ -61,36 +53,6 @@ end
   posts {
     id
     title
-    rating
-  }
-}
-```
-
-### Add comments
-
-* Visit http://localhost:3000/comments/new
-* That won't do. Edit `views/comments/_form.html.erb` and replace the `post_id` field:
-
-```html
-  <div class="field">
-    <%= form.label :post_id %>
-    <%= form.collection_select(:post_id, Post.all, :id, :title) %>
-  </div>
-```
-
-* Now add some comments to a post
-* In graphiql:
-
-```graphql
-{
-  posts {
-    id
-    title
-    rating
-    comments {
-      id
-      title
-    }
   }
 }
 ```
@@ -178,7 +140,7 @@ export const RootStoreContext = createStoreContext<RootStore>(React)
 export const useQuery = createUseQueryHook(RootStoreContext, React)
 ```
 
-* Now let's update the welcome screen to show the posts and comments:
+* Now let's update the welcome screen to show the posts:
 
 ```typescript
 // ...
@@ -286,7 +248,5 @@ export const RootStoreModel = RootStoreBase.props({
 * rails db:reset
 * rm ./db/schema.rb
 * Now either start from `master` or:
- - rails d scaffold Comment
  - rails d scaffold Post
- - rails d graphql:object Comment
  - rails d graphql:object Post
