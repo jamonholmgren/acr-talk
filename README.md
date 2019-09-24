@@ -2,11 +2,12 @@
 
 This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.com/jamonholmgren) and [Morgan Laco](https://twitter.com/morgancodes).
 
-## Rails App
+## Rails App -- Part 1
 
-Go in the `./rails` folder and do the following. You'll need the latest Ruby and Yarn installed.
+* Go in the `./AcrRails` folder
+* You'll need the latest Ruby and Yarn installed
 
-### Initial setup
+### Setup
 
 * Start from `master` branch
 * Run `bundle install`
@@ -87,8 +88,9 @@ class GraphqlController < ApplicationController
 end
 ```
 
-## React Native
+## React Native -- Part 1
 
+* Now switch to the `AcrReactNative` directory.
 * You'll need the latest Yarn and CocoaPods installed.
 
 ### Setup
