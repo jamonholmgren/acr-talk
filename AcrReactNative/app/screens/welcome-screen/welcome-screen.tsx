@@ -1,5 +1,13 @@
 import * as React from "react"
-import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView } from "react-native"
+import {
+  View,
+  Image,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native"
 import { NavigationScreenProps } from "react-navigation"
 import { Text } from "../../components/text"
 import { Button } from "../../components/button"
@@ -8,6 +16,8 @@ import { Wallpaper } from "../../components/wallpaper"
 import { Header } from "../../components/header"
 import { color, spacing } from "../../theme"
 import { bowserLogo } from "./"
+import { observer } from "mobx-react"
+import { useStores, useQuery } from "../../models/root-store"
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -80,10 +90,15 @@ const FOOTER_CONTENT: ViewStyle = {
 
 export interface WelcomeScreenProps extends NavigationScreenProps<{}> {}
 
-export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = props => {
+export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observer(props => {
   const nextScreen = React.useMemo(() => () => props.navigation.navigate("demo"), [
     props.navigation,
   ])
+
+  const rootStore = useStores()
+
+  const { error, data, loading, query } = useQuery(store => store.queryPosts())
+  if (error) return <Text>{error.message}</Text>
 
   return (
     <View style={FULL}>
@@ -97,25 +112,24 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = props 
         </Text>
         <Text style={TITLE} preset="header" tx="welcomeScreen.readyForLaunch" />
         <Image source={bowserLogo} style={BOWSER} />
-        <Text style={CONTENT}>
-          This probably isn't what your app is going to look like. Unless your designer handed you
-          this screen and, in that case, congrats! You're ready to ship.
-        </Text>
-        <Text style={CONTENT}>
-          For everyone else, this is where you'll see a live preview of your fully functioning app
-          using Ignite.
-        </Text>
+        <View>
+          {Array.from(rootStore.posts).map(([k, p]) => (
+            <Text key={k} style={CONTENT}>
+              {p.title}
+            </Text>
+          ))}
+        </View>
       </Screen>
       <SafeAreaView style={FOOTER}>
         <View style={FOOTER_CONTENT}>
           <Button
             style={CONTINUE}
             textStyle={CONTINUE_TEXT}
-            tx="welcomeScreen.continue"
-            onPress={nextScreen}
+            text={loading ? "Refreshing" : "Refresh"}
+            onPress={query!.refetch}
           />
         </View>
       </SafeAreaView>
     </View>
   )
-}
+})

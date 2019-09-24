@@ -7,6 +7,7 @@ import { RootStoreBase } from "../gql/RootStore.base"
  */
 export const RootStoreModel = RootStoreBase.props({
   navigationStore: types.optional(NavigationStoreModel, {}),
+  status: types.optional(types.string, "starting"),
 })
 
 /**
