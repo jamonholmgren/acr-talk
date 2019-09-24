@@ -1,6 +1,7 @@
 import * as React from "react"
 import { View, Image, ViewStyle, TextStyle, ImageStyle, SafeAreaView } from "react-native"
 import { NavigationScreenProps } from "react-navigation"
+import { observer } from "mobx-react"
 import { Text } from "../../components/text"
 import { Button } from "../../components/button"
 import { Screen } from "../../components/screen"
@@ -8,6 +9,7 @@ import { Wallpaper } from "../../components/wallpaper"
 import { Header } from "../../components/header"
 import { color, spacing } from "../../theme"
 import { bowserLogo } from "./"
+import { useStores } from "../../models/root-store"
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -80,10 +82,12 @@ const FOOTER_CONTENT: ViewStyle = {
 
 export interface WelcomeScreenProps extends NavigationScreenProps<{}> {}
 
-export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = props => {
+export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observer(props => {
   const nextScreen = React.useMemo(() => () => props.navigation.navigate("demo"), [
     props.navigation,
   ])
+
+  const rootStore = useStores()
 
   return (
     <View style={FULL}>
@@ -118,4 +122,4 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = props 
       </SafeAreaView>
     </View>
   )
-}
+})
