@@ -9,14 +9,13 @@ Go in the `./rails` folder and do the following.
 ### Initial setup
 
 * Start from `master` branch
-* rails g graphql:install
-* rails g scaffold Post title:string
-* rails db:migrate
-* Edit models/post.rb:
+* Run `rails g graphql:install`
+* Run `rails g scaffold Post title:string`
+* Run `rails db:migrate`
 
 ### Create GraphQL types and query
 
-* rails g graphql:object Post id:ID title:String
+* Run `rails g graphql:object Post id:ID title:String`
 * Edit `graphql/types/query_type.rb`:
 
 ```ruby
@@ -44,9 +43,9 @@ end
 
 ### Check it out!
 
-* rails server
+* Run `rails server`
 * In a new tab, visit http://localhost:3000/posts/new
-* Visit http://localhost:3000/graphiql and type in:
+* In a new tab, visit http://localhost:3000/graphiql and type in:
 
 ```graphql
 {
@@ -59,8 +58,8 @@ end
 
 ### Dump the GraphQL Schema file
 
-* rails g task graphql dump
-* In lib/tasks/graphql.rake:
+* Run `rails g task graphql dump`
+* Edit `lib/tasks/graphql.rake`:
 
 ```ruby
 namespace :graphql do
@@ -74,9 +73,9 @@ namespace :graphql do
 end
 ```
 
-* rake graphql:dump
+* Run `rake graphql:dump`
 * You'll see the path of the new schema file.
-* One last thing -- edit the graphql_controller.rb file to remove the CSRF protection so we can use it as an API:
+* Edit the `app/controllers/graphql_controller.rb` file to remove the CSRF protection so we can use it as an API:
 
 ```ruby
 class GraphqlController < ApplicationController
@@ -88,10 +87,10 @@ end
 
 ## React Native
 
-* yarn add mst-gql graphql-request
-* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
-* If you run it again, it'll skip some files and write to the .base files
-* Now we need to import the base MobX-State-Tree model to the RootStore properly. In app/models/root-store/root-store.ts:
+* Run `yarn add mst-gql graphql-request`
+* Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
+* Note: if you run it again, it'll skip some files and write to the .base files. It's idempotent; in other words, run as often as you'd like.
+* Now we need to import the base MobX-State-Tree model to the RootStore properly. In `app/models/root-store/root-store.ts`:
 
 ```typescript
 // .. omitted above
@@ -108,7 +107,7 @@ export const RootStoreModel = RootStoreBase.props({
 // .. omitted below
 ```
 
-* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and in the constructor, point to the running localhost server:
+* Let's set up the API connection. In `app/models/environment.ts`, remove anything to do with the API, and in the constructor, point to the running localhost server:
 
 ```typescript
 import { Reactotron } from "../services/reactotron"
@@ -140,7 +139,7 @@ export const RootStoreContext = createStoreContext<RootStore>(React)
 export const useQuery = createUseQueryHook(RootStoreContext, React)
 ```
 
-* Now let's update the welcome screen to show the posts:
+* Edit `app/screens/welcome-screen/welcome-screen.tsx` to show the posts:
 
 ```typescript
 // ...
@@ -176,8 +175,8 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
 ## Rails -- Part 2
 
 * Now let's go back to the Rails app and create a new mutation to allow us to delete posts.
-* rails g graphql:mutation DeletePost
-* In `app/graphql/mutations/delete_post.rb`:
+* Run `rails g graphql:mutation DeletePost`
+* Edit `app/graphql/mutations/delete_post.rb`:
 
 ```ruby
 module Mutations
@@ -202,12 +201,12 @@ end
 ```
 
 * Now rerun the rake query dump task and mst-gql generator:
-* rake graphql:dump
-* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
+* Run `rake graphql:dump`
+* Rum `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
 
 ## React Native -- Part 2
 
-* Back in the React Native app, edit the `app/screens/welcome-screen.tsx` file:
+* Back in the React Native app, edit the `app/screens/welcome-screen/welcome-screen.tsx` file:
 
 ```typescript
 
@@ -229,7 +228,7 @@ const { setQuery } = useQuery()
 ))}
 ```
 
-* Also edit the `app/models/root-store/root-store.ts` file to add the `deletePost` action:
+* Edit `app/models/root-store/root-store.ts` to add the `deletePost` action:
 
 ```typescript
 export const RootStoreModel = RootStoreBase.props({
@@ -245,8 +244,8 @@ export const RootStoreModel = RootStoreBase.props({
 
 ### Cleanup/Start Over
 
-* rails db:reset
-* rm ./db/schema.rb
+* Run `rails db:reset`
+* Run `rm ./db/schema.rb`
 * Now either start from `master` or:
- - rails d scaffold Post
- - rails d graphql:object Post
+ - Run `rails d scaffold Post`
+ - Run `rails d graphql:object Post`
