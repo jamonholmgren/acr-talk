@@ -4,11 +4,13 @@ This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.co
 
 ## Rails App
 
-Go in the `./rails` folder and do the following.
+Go in the `./rails` folder and do the following. You'll need the latest Ruby and Yarn installed.
 
 ### Initial setup
 
 * Start from `master` branch
+* Run `bundle install`
+* Run `yarn`
 * Run `rails g graphql:install`
 * Run `rails g scaffold Post title:string`
 * Run `rails db:migrate`
@@ -87,6 +89,11 @@ end
 
 ## React Native
 
+* You'll need the latest Yarn and CocoaPods installed.
+
+### Setup
+
+* Run `yarn` and `cd ios; pod install; cd -`
 * Run `yarn add mst-gql graphql-request`
 * Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
 * Note: if you run it again, it'll skip some files and write to the .base files. It's idempotent; in other words, run as often as you'd like.
