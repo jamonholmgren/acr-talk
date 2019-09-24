@@ -3,7 +3,6 @@
 /* tslint:disable */
 
 export * from "./PostModel"
-export * from "./CommentModel"
 export * from "./DeletePostPayloadModel"
 export * from "./RootStore"
 export * from "./reactUtils"

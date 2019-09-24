@@ -6,8 +6,6 @@ import { MSTGQLStore, configureStoreMixin, QueryOptions } from "mst-gql"
 
 import { PostModel, PostModelType } from "./PostModel"
 import { postModelPrimitives, PostModelSelector } from "./PostModel.base"
-import { CommentModel, CommentModelType } from "./CommentModel"
-import { commentModelPrimitives, CommentModelSelector } from "./CommentModel.base"
 import { DeletePostPayloadModel, DeletePostPayloadModelType } from "./DeletePostPayloadModel"
 import { deletePostPayloadModelPrimitives, DeletePostPayloadModelSelector } from "./DeletePostPayloadModel.base"
 
@@ -21,10 +19,9 @@ export type DeletePostInput = {
 */
 export const RootStoreBase = MSTGQLStore
   .named("RootStore")
-  .extend(configureStoreMixin([['Post', () => PostModel], ['Comment', () => CommentModel], ['DeletePostPayload', () => DeletePostPayloadModel]], ['Post', 'Comment']))
+  .extend(configureStoreMixin([['Post', () => PostModel], ['DeletePostPayload', () => DeletePostPayloadModel]], ['Post']))
   .props({
-    posts: types.optional(types.map(types.late(() => PostModel)), {}),
-    comments: types.optional(types.map(types.late(() => CommentModel)), {})
+    posts: types.optional(types.map(types.late(() => PostModel)), {})
   })
   .actions(self => ({
     // Find a post by ID
