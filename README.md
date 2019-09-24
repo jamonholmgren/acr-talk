@@ -146,16 +146,13 @@ export const RootStoreModel = RootStoreBase.props({
 // .. omitted below
 ```
 
-* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and replace with the following:
+* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and in the constructor, point to the running localhost server:
 
 ```typescript
+import { Reactotron } from "../services/reactotron"
 import { createHttpClient } from "mst-gql"
 import { GraphQLClient } from "graphql-request"
-```
 
-* In the constructor, point to the running instance:
-
-```typescript
 export class Environment {
   reactotron: Reactotron
   gqlHttpClient: GraphQLClient
@@ -205,7 +202,7 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
       ))}
     </View>
 
-  // ... and update the continue button:
+  // ... and update the continue button to allow refreshing:
     <Button
       style={CONTINUE}
       textStyle={CONTINUE_TEXT}
@@ -217,6 +214,34 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
 ## Rails -- Part 2
 
 * Now let's go back to the Rails app and create a new mutation to allow us to delete posts.
+* rails g graphql:mutation DeletePost
+* In `app/graphql/mutations/delete_post.rb`:
+
+```ruby
+module Mutations
+  class DeletePost < GraphQL::Schema::RelayClassicMutation
+    graphql_name "DeletePost"
+
+    field :post, Types::PostType, null: true
+    field :result, Boolean, null: true
+
+    argument :id, ID, required: true
+
+    def resolve(**args)
+      post = Post.find(args[:id])
+      post.destroy
+      {
+        post: post,
+        result: post.errors.blank?,
+      }
+    end
+  end
+end
+```
+
+* Now rerun the rake query dump task and mst-gql generator:
+* rake graphql:dump
+* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
 
 ### Cleanup/Start Over
 
