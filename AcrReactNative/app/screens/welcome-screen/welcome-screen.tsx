@@ -100,6 +100,9 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
   const { error, data, loading, query } = useQuery(store => store.queryPosts())
   if (error) return <Text>{error.message}</Text>
 
+  // for deletion
+  const { setQuery } = useQuery()
+
   return (
     <View style={FULL}>
       <Wallpaper />
@@ -114,9 +117,14 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
         <Image source={bowserLogo} style={BOWSER} />
         <View>
           {Array.from(rootStore.posts).map(([k, p]) => (
-            <Text key={k} style={CONTENT}>
-              {p.title}
-            </Text>
+            <View key={k}>
+              <Text style={CONTENT}>
+                {p.title} {p.comments.toString()}
+              </Text>
+              <TouchableOpacity onPress={() => setQuery(rootStore.deletePost(p.id))}>
+                <Text>DEL</Text>
+              </TouchableOpacity>
+            </View>
           ))}
         </View>
       </Screen>

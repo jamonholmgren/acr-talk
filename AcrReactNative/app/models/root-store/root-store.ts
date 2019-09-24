@@ -7,8 +7,11 @@ import { RootStoreBase } from "../gql/RootStore.base"
  */
 export const RootStoreModel = RootStoreBase.props({
   navigationStore: types.optional(NavigationStoreModel, {}),
-  status: types.optional(types.string, "starting"),
-})
+}).actions(self => ({
+  deletePost(id: string) {
+    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
+  },
+}))
 
 /**
  * The RootStore instance.

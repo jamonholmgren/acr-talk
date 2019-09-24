@@ -17,7 +17,7 @@ Go in the `./rails` folder and do the following.
 
 ```ruby
 class Post < ApplicationRecord
-  has_many :comments
+  has_many :comments, dependent: :delete_all
 end
 ```
 
@@ -242,6 +242,44 @@ end
 * Now rerun the rake query dump task and mst-gql generator:
 * rake graphql:dump
 * yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
+
+## React Native -- Part 2
+
+* Back in the React Native app, edit the `app/screens/welcome-screen.tsx` file:
+
+```typescript
+
+// just above the JSX
+const { setQuery } = useQuery()
+
+// in the JSX, modify this section
+{Array.from(rootStore.posts).map(([k, p]) => (
+  <View key={k}>
+    <Text style={CONTENT}>{p.title}</Text>
+    <TouchableOpacity
+      onPress={() =>
+        setQuery(rootStore.deletePost(p.id))
+      }
+    >
+      <Text>DEL</Text>
+    </TouchableOpacity>
+  </View>
+))}
+```
+
+* Also edit the `app/models/root-store/root-store.ts` file to add the `deletePost` action:
+
+```typescript
+export const RootStoreModel = RootStoreBase.props({
+  navigationStore: types.optional(NavigationStoreModel, {}),
+}).actions(self => ({
+  deletePost(id: string) {
+    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
+  },
+}))
+```
+
+* Now, when you refresh, you should be able to delete posts!
 
 ### Cleanup/Start Over
 
