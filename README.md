@@ -12,7 +12,6 @@ Go in the `./rails` folder and do the following.
 * rails g graphql:install
 * rails g scaffold Post title:string
 * rails db:migrate
-* Edit models/post.rb:
 
 ### Create GraphQL types and query
 
