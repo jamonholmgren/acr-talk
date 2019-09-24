@@ -105,7 +105,7 @@ namespace :graphql do
   desc "Dump GraphQL Schema File"
   task dump: :environment do
     schema_dump = AcrRailsSchema.to_definition
-    schema_path = Rails.root.join("./acr.schema")
+    schema_path = Rails.root.join("./acr.graphql")
     File.write(schema_path, schema_dump)
     puts schema_path
   end
@@ -114,10 +114,109 @@ end
 
 * rake graphql:dump
 * You'll see the path of the new schema file.
+* One last thing -- edit the graphql_controller.rb file to remove the CSRF protection so we can use it as an API:
+
+```ruby
+class GraphqlController < ApplicationController
+  protect_from_forgery with: :null_session
+
+  # ...
+end
+```
 
 ## React Native
 
-* TODO
+* yarn add mst-gql graphql-request
+* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
+* If you run it again, it'll skip some files and write to the .base files
+* Now we need to import the base MobX-State-Tree model to the RootStore properly. In app/models/root-store/root-store.ts:
+
+```typescript
+// .. omitted above
+
+import { RootStoreBase } from "../gql/RootStore.base"
+
+/**
+ * A RootStore model.
+ */
+export const RootStoreModel = RootStoreBase.props({
+  navigationStore: types.optional(NavigationStoreModel, {}),
+})
+
+// .. omitted below
+```
+
+* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and replace with the following:
+
+```typescript
+import { createHttpClient } from "mst-gql"
+import { GraphQLClient } from "graphql-request"
+```
+
+* In the constructor, point to the running instance:
+
+```typescript
+export class Environment {
+  reactotron: Reactotron
+  gqlHttpClient: GraphQLClient
+
+  constructor() {
+    this.reactotron = new Reactotron()
+    this.gqlHttpClient = createHttpClient("http://localhost:3000/graphql")
+  }
+
+  async setup() {
+    await this.reactotron.setup()
+  }
+}
+```
+
+* Ensure that MST is using the right context by editing `app/models/root-store/root-store-context.ts`:
+
+```typescript
+import { createStoreContext, createUseQueryHook } from "mst-gql"
+import React from "react"
+
+export const RootStoreContext = createStoreContext<RootStore>(React)
+export const useQuery = createUseQueryHook(RootStoreContext, React)
+```
+
+* Now let's update the welcome screen to show the posts and comments:
+
+```typescript
+// ...
+import { useStores, useQuery } from "../../models/root-store"
+
+// ...
+export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observer(props => {
+  const rootStore = useStores()
+
+  const { error, data, loading, query } = useQuery(store => store.queryPosts())
+
+  if (error) return <Text>{error.message}</Text>
+  if (!data || loading) return <Text>"Loading..."</Text>
+
+  // ... in the JSX portion:
+    <View>
+      {Array.from(rootStore.posts).map(([k, p]) => (
+        <Text key={k} style={CONTENT}>
+          {p.title}
+        </Text>
+      ))}
+    </View>
+
+  // ... and update the continue button:
+    <Button
+      style={CONTINUE}
+      textStyle={CONTINUE_TEXT}
+      text={loading ? "Refreshing" : "Refresh"}
+      onPress={query!.refetch}
+    />
+```
+
+## Rails -- Part 2
+
+* Now let's go back to the Rails app and create a new mutation to allow us to delete posts.
 
 ### Cleanup/Start Over
 
