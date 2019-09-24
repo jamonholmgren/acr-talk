@@ -10,21 +10,13 @@ Go in the `./rails` folder and do the following.
 
 * Start from `master` branch
 * rails g graphql:install
-* rails g scaffold Post title:string rating:integer
-* rails g scaffold Comment title:string post:references
+* rails g scaffold Post title:string
 * rails db:migrate
 * Edit models/post.rb:
 
-```ruby
-class Post < ApplicationRecord
-  has_many :comments
-end
-```
-
 ### Create GraphQL types and query
 
-* rails g graphql:object Post id:ID title:String rating:Int "comments:[Comment]"
-* rails g graphql:object Comment id:ID title:String post:Post
+* rails g graphql:object Post id:ID title:String
 * Edit `graphql/types/query_type.rb`:
 
 ```ruby
@@ -61,36 +53,6 @@ end
   posts {
     id
     title
-    rating
-  }
-}
-```
-
-### Add comments
-
-* Visit http://localhost:3000/comments/new
-* That won't do. Edit `views/comments/_form.html.erb` and replace the `post_id` field:
-
-```html
-  <div class="field">
-    <%= form.label :post_id %>
-    <%= form.collection_select(:post_id, Post.all, :id, :title) %>
-  </div>
-```
-
-* Now add some comments to a post
-* In graphiql:
-
-```graphql
-{
-  posts {
-    id
-    title
-    rating
-    comments {
-      id
-      title
-    }
   }
 }
 ```
@@ -146,16 +108,13 @@ export const RootStoreModel = RootStoreBase.props({
 // .. omitted below
 ```
 
-* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and replace with the following:
+* Let's set up the API connection. In app/models/environment.ts, remove anything to do with the API, and in the constructor, point to the running localhost server:
 
 ```typescript
+import { Reactotron } from "../services/reactotron"
 import { createHttpClient } from "mst-gql"
 import { GraphQLClient } from "graphql-request"
-```
 
-* In the constructor, point to the running instance:
-
-```typescript
 export class Environment {
   reactotron: Reactotron
   gqlHttpClient: GraphQLClient
@@ -181,7 +140,7 @@ export const RootStoreContext = createStoreContext<RootStore>(React)
 export const useQuery = createUseQueryHook(RootStoreContext, React)
 ```
 
-* Now let's update the welcome screen to show the posts and comments:
+* Now let's update the welcome screen to show the posts:
 
 ```typescript
 // ...
@@ -205,7 +164,7 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
       ))}
     </View>
 
-  // ... and update the continue button:
+  // ... and update the continue button to allow refreshing:
     <Button
       style={CONTINUE}
       textStyle={CONTINUE_TEXT}
@@ -217,13 +176,77 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
 ## Rails -- Part 2
 
 * Now let's go back to the Rails app and create a new mutation to allow us to delete posts.
+* rails g graphql:mutation DeletePost
+* In `app/graphql/mutations/delete_post.rb`:
+
+```ruby
+module Mutations
+  class DeletePost < GraphQL::Schema::RelayClassicMutation
+    graphql_name "DeletePost"
+
+    field :post, Types::PostType, null: true
+    field :result, Boolean, null: true
+
+    argument :id, ID, required: true
+
+    def resolve(**args)
+      post = Post.find(args[:id])
+      post.destroy
+      {
+        post: post,
+        result: post.errors.blank?,
+      }
+    end
+  end
+end
+```
+
+* Now rerun the rake query dump task and mst-gql generator:
+* rake graphql:dump
+* yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql
+
+## React Native -- Part 2
+
+* Back in the React Native app, edit the `app/screens/welcome-screen.tsx` file:
+
+```typescript
+
+// just above the JSX
+const { setQuery } = useQuery()
+
+// in the JSX, modify this section
+{Array.from(rootStore.posts).map(([k, p]) => (
+  <View key={k}>
+    <Text style={CONTENT}>{p.title}</Text>
+    <TouchableOpacity
+      onPress={() =>
+        setQuery(rootStore.deletePost(p.id))
+      }
+    >
+      <Text>DEL</Text>
+    </TouchableOpacity>
+  </View>
+))}
+```
+
+* Also edit the `app/models/root-store/root-store.ts` file to add the `deletePost` action:
+
+```typescript
+export const RootStoreModel = RootStoreBase.props({
+  navigationStore: types.optional(NavigationStoreModel, {}),
+}).actions(self => ({
+  deletePost(id: string) {
+    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
+  },
+}))
+```
+
+* Now, when you refresh, you should be able to delete posts!
 
 ### Cleanup/Start Over
 
 * rails db:reset
 * rm ./db/schema.rb
 * Now either start from `master` or:
- - rails d scaffold Comment
  - rails d scaffold Post
- - rails d graphql:object Comment
  - rails d graphql:object Post
