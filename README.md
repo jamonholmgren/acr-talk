@@ -211,10 +211,11 @@ end
 
 * Now rerun the rake query dump task and mst-gql generator:
 * Run `rake graphql:dump`
-* Rum `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
+
 
 ## React Native -- Part 2
 
+* Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
 * Back in the React Native app, edit the `app/screens/welcome-screen/welcome-screen.tsx` file:
 
 ```typescript
