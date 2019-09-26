@@ -100,6 +100,7 @@ end
 * Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
 * Note: if you run it again, it'll skip some files and write to the .base files. It's idempotent; in other words, run as often as you'd like.
 * Now we need to import the base MobX-State-Tree model to the RootStore properly. In `app/models/root-store/root-store.ts`:
+* Run `yarn add -D react-dom`
 
 ```typescript
 // .. omitted above
