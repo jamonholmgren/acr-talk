@@ -164,7 +164,7 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
   const { error, data, loading, query } = useQuery(store => store.queryPosts())
 
   if (error) return <Text>{error.message}</Text>
-  if (!data || loading) return <Text>"Loading..."</Text>
+  if (!data || loading) return <Text>Loading...</Text>
 
   // ... in the JSX portion:
     <View>
