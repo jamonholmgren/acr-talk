@@ -98,7 +98,7 @@ end
 ### Setup
 
 * Run `yarn` and `cd ios; pod install; cd -`
-* Run `yarn add mst-gql@0.4.1 graphql-request react-dom`
+* Run `yarn add mst-gql@0.4.1 graphql-request@1.8.2 react-dom@16.9.0`
 * Now we want to generate our MST models from our GraphQL dump file.
 * Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
 * Note: if you run it again, it'll skip some files and write to the .base files. It's idempotent; in other words, run as often as you'd like.
