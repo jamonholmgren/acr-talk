@@ -10,6 +10,7 @@ This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.co
 ### Setup
 
 * Start from `master` branch
+* Add `gem "graphql"` to the Gemfile if it's not already there
 * Run `bundle install`
 * Run `yarn`
 * Run `rails g graphql:install`
