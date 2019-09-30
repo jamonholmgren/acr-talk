@@ -14,12 +14,12 @@ This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.co
 * Run `bundle install`
 * Run `yarn`
 * Run `rails g graphql:install`
-* Run `rails g scaffold Post title:string`
+* Run `rails g scaffold Post title:string body:string`
 * Run `rails db:migrate`
 
 ### Create GraphQL types and query
 
-* Run `rails g graphql:object Post id:ID title:String`
+* Run `rails g graphql:object Post id:ID title:String body:String`
 * Edit `graphql/types/query_type.rb`:
 
 ```ruby
@@ -56,6 +56,7 @@ end
   posts {
     id
     title
+    body
   }
 }
 ```
