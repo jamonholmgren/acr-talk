@@ -218,8 +218,21 @@ end
 
 ## React Native -- Part 2
 
+* Go back to the React Native app
 * Run `yarn mst-gql --format ts ../AcrRails/acr.graphql --outDir=app/models/gql`
-* Back in the React Native app, edit the `app/screens/welcome-screen/welcome-screen.tsx` file:
+* Edit `app/models/root-store/root-store.ts` to add the `deletePost` action:
+
+```typescript
+export const RootStoreModel = RootStoreBase.props({
+  navigationStore: types.optional(NavigationStoreModel, {}),
+}).actions(self => ({
+  deletePost(id: string) {
+    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
+  },
+}))
+```
+
+* Edit the `app/screens/welcome-screen/welcome-screen.tsx` file:
 
 ```typescript
 
@@ -239,18 +252,6 @@ const { setQuery } = useQuery()
     </TouchableOpacity>
   </View>
 ))}
-```
-
-* Edit `app/models/root-store/root-store.ts` to add the `deletePost` action:
-
-```typescript
-export const RootStoreModel = RootStoreBase.props({
-  navigationStore: types.optional(NavigationStoreModel, {}),
-}).actions(self => ({
-  deletePost(id: string) {
-    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
-  },
-}))
 ```
 
 * Now, when you refresh, you should be able to delete posts!
