@@ -163,11 +163,11 @@ export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observ
   const { query } = useQuery(store => store.queryPosts())
 
   // ... in the JSX portion:
-    <View>
-      {Array.from(rootStore.posts).map(([k, p]) => (
-        <Text key={k} style={CONTENT}>{p.title}</Text>
-      ))}
-    </View>
+  <View>
+    {Array.from(rootStore.posts).map(([k, p]) => (
+      <Text key={k} style={CONTENT}>{p.title}</Text>
+    ))}
+  </View>
 
   // ... and update the continue button to allow refreshing:
   <SafeAreaView style={FOOTER}>
