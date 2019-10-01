@@ -1,5 +1,7 @@
-import { createContext, useContext } from "react"
+import { useContext } from "react"
 import { RootStore } from "./root-store"
+import { createStoreContext, createUseQueryHook } from "mst-gql"
+import React from "react"
 
 /**
  * Create a context we can use to
@@ -7,7 +9,8 @@ import { RootStore } from "./root-store"
  * - Consume stores in our screens (or other components, though it's
  *   preferable to just connect screens)
  */
-const RootStoreContext = createContext<RootStore>({} as RootStore)
+export const RootStoreContext = createStoreContext<RootStore>(React)
+export const useQuery = createUseQueryHook(RootStoreContext, React)
 
 /**
  * The provider our root component will use to expose the root store

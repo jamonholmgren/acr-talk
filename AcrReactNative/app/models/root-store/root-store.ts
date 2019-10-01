@@ -1,12 +1,17 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { NavigationStoreModel } from "../../navigation/navigation-store"
+import { RootStoreBase } from "../gql/RootStore.base"
 
 /**
  * A RootStore model.
  */
-export const RootStoreModel = types.model("RootStore").props({
+export const RootStoreModel = RootStoreBase.props({
   navigationStore: types.optional(NavigationStoreModel, {}),
-})
+}).actions(self => ({
+  deletePost(id: string) {
+    return self.mutateDeletePost({ input: { id } }, undefined, () => self.posts.delete(id))
+  },
+}))
 
 /**
  * The RootStore instance.

@@ -9,7 +9,8 @@ import { Wallpaper } from "../../components/wallpaper"
 import { Header } from "../../components/header"
 import { color, spacing } from "../../theme"
 import { bowserLogo } from "./"
-import { useStores } from "../../models/root-store"
+import { useStores, useQuery } from "../../models/root-store"
+import { TouchableOpacity } from "react-native-gesture-handler"
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -83,42 +84,28 @@ const FOOTER_CONTENT: ViewStyle = {
 export interface WelcomeScreenProps extends NavigationScreenProps<{}> {}
 
 export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observer(props => {
-  const nextScreen = React.useMemo(() => () => props.navigation.navigate("demo"), [
-    props.navigation,
-  ])
-
   const rootStore = useStores()
+  const { query } = useQuery(store => store.queryPosts())
+  const { setQuery } = useQuery()
 
   return (
     <View style={FULL}>
       <Wallpaper />
       <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
-        <Header headerTx="welcomeScreen.poweredBy" style={HEADER} titleStyle={HEADER_TITLE} />
-        <Text style={TITLE_WRAPPER}>
-          <Text style={TITLE} text="Your new app, " />
-          <Text style={ALMOST} text="almost" />
-          <Text style={TITLE} text="!" />
-        </Text>
-        <Text style={TITLE} preset="header" tx="welcomeScreen.readyForLaunch" />
-        <Image source={bowserLogo} style={BOWSER} />
-        <Text style={CONTENT}>
-          This probably isn't what your app is going to look like. Unless your designer handed you
-          this screen and, in that case, congrats! You're ready to ship.
-        </Text>
-        <Text style={CONTENT}>
-          For everyone else, this is where you'll see a live preview of your fully functioning app
-          using Ignite.
-        </Text>
-      </Screen>
-      <SafeAreaView style={FOOTER}>
-        <View style={FOOTER_CONTENT}>
-          <Button
-            style={CONTINUE}
-            textStyle={CONTINUE_TEXT}
-            tx="welcomeScreen.continue"
-            onPress={nextScreen}
-          />
+        <View>
+          {Array.from(rootStore.posts).map(([k, p]) => (
+            <View key={k} style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ fontSize: 23 }}>{p.title}</Text>
+              <TouchableOpacity onPress={() => setQuery(rootStore.deletePost(p.id))}>
+                <Text style={{ fontSize: 16 }}> - Delete</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
+      </Screen>
+
+      <SafeAreaView style={FOOTER}>
+        <Button style={CONTINUE} textStyle={CONTINUE_TEXT} text="Refresh" onPress={query.refetch} />
       </SafeAreaView>
     </View>
   )
