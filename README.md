@@ -160,28 +160,19 @@ import { useStores, useQuery } from "../../models/root-store"
 // ...
 export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = observer(props => {
   const rootStore = useStores()
-
-  const { error, data, loading, query } = useQuery(store => store.queryPosts())
-
-  if (error) return <Text>{error.message}</Text>
-  if (!data || loading) return <Text>Loading...</Text>
+  const { query } = useQuery(store => store.queryPosts())
 
   // ... in the JSX portion:
     <View>
       {Array.from(rootStore.posts).map(([k, p]) => (
-        <Text key={k} style={CONTENT}>
-          {p.title}
-        </Text>
+        <Text key={k} style={CONTENT}>{p.title}</Text>
       ))}
     </View>
 
   // ... and update the continue button to allow refreshing:
-    <Button
-      style={CONTINUE}
-      textStyle={CONTINUE_TEXT}
-      text={loading ? "Refreshing" : "Refresh"}
-      onPress={query!.refetch}
-    />
+  <SafeAreaView style={FOOTER}>
+    <Button style={CONTINUE} textStyle={CONTINUE_TEXT} text="Refresh" onPress={query.refetch} />
+  </SafeAreaView>
 ```
 
 ## Rails -- Part 2
@@ -235,32 +226,31 @@ export const RootStoreModel = RootStoreBase.props({
 * Edit the `app/screens/welcome-screen/welcome-screen.tsx` file:
 
 ```typescript
-
 // just above the JSX
 const { setQuery } = useQuery()
 
 // in the JSX, modify this section
 return (
-    <View style={FULL}>
-      <Wallpaper />
-      <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
-        <View>
-          {Array.from(rootStore.posts).map(([k, p]) => (
-            <View key={k} style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ fontSize: 23 }}>{p.title}</Text>
-              <TouchableOpacity onPress={()=> setQuery(rootStore.deletePost(p.id))}>
-                <Text style={{ fontSize: 16 }}> - Delete</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </Screen>
+  <View style={FULL}>
+    <Wallpaper />
+    <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
+      <View>
+        {Array.from(rootStore.posts).map(([k, p]) => (
+          <View key={k} style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 23 }}>{p.title}</Text>
+            <TouchableOpacity onPress={()=> setQuery(rootStore.deletePost(p.id))}>
+              <Text style={{ fontSize: 16 }}> - Delete</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    </Screen>
 
-      <SafeAreaView style={FOOTER}>
-        <Button style={CONTINUE} textStyle={CONTINUE_TEXT} text="Refresh" onPress={query.refetch} />
-      </SafeAreaView>
-    </View>
-  )
+    <SafeAreaView style={FOOTER}>
+      <Button style={CONTINUE} textStyle={CONTINUE_TEXT} text="Refresh" onPress={query.refetch} />
+    </SafeAreaView>
+  </View>
+)
 ```
 
 * Now, when you refresh, you should be able to delete posts!
