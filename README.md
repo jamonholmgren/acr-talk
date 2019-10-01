@@ -245,31 +245,20 @@ return (
       <Wallpaper />
       <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
         <View>
-          {Array.from(rootStore.posts).map(([k, p]) => {
-            return (
-              <View key={k} style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 23 }}>{p.title}</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setQuery(rootStore.deletePost(p.id))
-                  }}
-                >
-                  <Text style={{ fontSize: 16 }}> - Delete</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          })}
+          {Array.from(rootStore.posts).map(([k, p]) => (
+            <View key={k} style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ fontSize: 23 }}>{p.title}</Text>
+              <TouchableOpacity onPress={setQuery(rootStore.deletePost(p.id))}>
+                <Text style={{ fontSize: 16 }}> - Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </Screen>
 
       <SafeAreaView style={FOOTER}>
         <View style={FOOTER_CONTENT}>
-          <Button
-            style={CONTINUE}
-            textStyle={CONTINUE_TEXT}
-            text="Refresh"
-            onPress={query.refetch}
-          />
+          <Button style={CONTINUE} text="Refresh" onPress={query.refetch} />
         </View>
       </SafeAreaView>
     </View>
