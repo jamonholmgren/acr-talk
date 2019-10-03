@@ -1,4 +1,4 @@
-# Ancient City Ruby, Rails, React 2019
+# Ancient City Ruby 2019
 
 This is the repo for the live coding talk by [Jamon Holmgren](https://twitter.com/jamonholmgren) and [Morgan Laco](https://twitter.com/morgancodes).
 
